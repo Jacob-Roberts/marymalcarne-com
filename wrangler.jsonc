@@ -7,13 +7,13 @@
 	"d1_databases": [
 		{
 			"binding": "DB",
-			"database_name": "marymalcarne-com-d1","database_id": "511f94b3-66cd-4705-9030-6df70dbf3b24",
+			"database_name": "marymalcarne-com","database_id": "40dd77ad-f973-4b49-8ac5-ee34acba1686",
 		},
 	],
 	"r2_buckets": [
 		{
 			"binding": "MEDIA",
-			"bucket_name": "marymalcarne-com-r2","preview_bucket_name": "marymalcarne-com-r2",
+			"bucket_name": "marymalcarne-com","preview_bucket_name": "marymalcarne-com",
 		},
 	],
 	// Sandboxed plugins require Worker Loader, available on Workers paid plans. Uncomment to enable:
@@ -22,4 +22,5 @@
 	"triggers": {
 		"crons": ["* * * * *"],
 	},
+	"routes": [{ "pattern": "marymalcarne.com", "custom_domain": true }],
 }
