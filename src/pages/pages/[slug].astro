@@ -5,9 +5,10 @@ import {
 	decodeSlug,
 	getSiteSettings,
 } from "emdash";
-import { PortableText } from "emdash/ui";
+import { Image, PortableText } from "emdash/ui";
 import Base from "../../layouts/Base.astro";
 import { resolveBlogSiteIdentity } from "../../utils/site-identity";
+import type { BookMediaField } from "../../types/books";
 
 const slug = decodeSlug(Astro.params.slug);
 
@@ -28,6 +29,10 @@ const seo = getSeoMeta(page, {
 	siteUrl: Astro.url.origin,
 	path: Astro.url.pathname.replace(/\/$/, ""),
 });
+
+// `photo` is added to the pages collection in the production database, so it is
+// not in the generated local `Page` type.
+const photo = (page.data as { photo?: BookMediaField }).photo ?? null;
 ---
 
 <Base
@@ -40,6 +45,13 @@ const seo = getSeoMeta(page, {
 >
 	<article class="page-article">
 		<header class="page-header">
+			{
+				photo && (
+					<div class="page-photo" {...page.edit.photo}>
+						<Image image={photo} />
+					</div>
+				)
+			}
 			<h1 class="page-title" {...page.edit.title}>{page.data.title}</h1>
 		</header>
 
@@ -58,6 +70,24 @@ const seo = getSeoMeta(page, {
 
 	.page-header {
 		margin-bottom: var(--spacing-8);
+		text-align: center;
+	}
+
+	.page-photo {
+		width: min(280px, 60vw);
+		margin: 0 auto var(--spacing-8);
+		border-radius: var(--radius-xl);
+		overflow: hidden;
+		background: var(--color-surface);
+		box-shadow: var(--shadow-lg);
+		border: 1px solid var(--color-border-subtle);
+	}
+
+	.page-photo :global(img) {
+		width: 100%;
+		height: auto;
+		aspect-ratio: 1 / 1;
+		object-fit: cover;
 	}
 
 	.page-title {

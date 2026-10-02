@@ -1,30 +1,87 @@
 /*
-  theme.css -- your theme overrides. This is the file to edit to
-  retheme the site.
+  theme.css -- theme overrides for marymalcarne.com.
 
-  Every design token lives in src/styles/tokens.css (colors, type
-  scale, spacing, layout, shadows) with its default value. Override any
-  of them here: declarations in this file are unlayered, so they always
-  beat the @layer base defaults in tokens.css.
+  Direction: storybook magic. Warm parchment grounds, a plum/berry accent
+  carried by Lora (body) and Fraunces (headings), soft radii, and a restrained
+  gold used only for the sparkle glyphs.
 
-  Colors are defined with light-dark(). Overriding with a plain color
-  changes light and dark mode at once; use light-dark(<light>, <dark>)
-  to set different values per mode.
+  Every design token defaults in src/styles/tokens.css. Declarations here are
+  unlayered, so they always beat those @layer base defaults. Colors use
+  light-dark(), so an override can differ per mode.
 
-  Webfonts are loaded in astro.config.mjs (--font-body, --font-mono).
-  Swap the loaded font there; use overrides here for system fonts or a
-  separate heading face.
-
-  Example:
-
-  :root {
-    --color-brand: light-dark(#0f766e, #2dd4bf);
-    --font-heading: "Iowan Old Style", Georgia, serif;
-    --radius: 8px;
-  }
+  Webfonts are loaded in astro.config.mjs: Lora -> --font-body, Fraunces ->
+  --font-heading.
 */
 
 :root {
+	/* Colors -- light mode first, dark inside light-dark() */
+	--color-bg: light-dark(#fdf8f3, #1c161d);
+	--color-bg-subtle: light-dark(#f7ede3, #241c27);
+	--color-surface: light-dark(#fffaf5, #2a2029);
+	--color-text: light-dark(#2f2733, #f5ece4);
+	--color-text-secondary: light-dark(#5c4f5f, #cfc0c9);
+	--color-muted: light-dark(#8b7d8e, #9c8d97);
+	--color-border: light-dark(#e8d9cd, #3a2e39);
+	--color-border-subtle: light-dark(#f1e5da, #2f2530);
+
+	--color-brand: light-dark(#8b3a62, #e79ab8);
+	--color-brand-hover: light-dark(#6e2b4d, #f0b3cb);
+	--color-on-brand: light-dark(#fffaf5, #2a1520);
+	--color-brand-ring: color-mix(in srgb, var(--color-brand) 25%, transparent);
+
+	/* Storybook-specific: a muted gold used only for sparkle glyphs, never UI. */
+	--color-sparkle: light-dark(#c9a227, #e3c46b);
+	/* Soft warm wash behind the hero. */
+	--color-wash: light-dark(#f3e3ec, #2a1f2b);
+
+	/* EmDash search theming (kept in sync with the palette) */
+	--emdash-search-bg: var(--color-bg);
+	--emdash-search-text: var(--color-text);
+	--emdash-search-muted: var(--color-muted);
+	--emdash-search-border: var(--color-border);
+	--emdash-search-hover: var(--color-surface);
+	--emdash-search-highlight: var(--color-text);
+
+	/* Typography */
+	--font-weight-heading: 600;
+	--font-weight-display: 700;
+
+	/* Serif body copy reads smaller, so nudge the scale up a touch. */
+	--font-size-base: 1.0625rem;
+	--font-size-xs: 0.8125rem;
+	--font-size-sm: 0.875rem;
+	--font-size-lg: 1.1875rem;
+	--font-size-xl: 1.375rem;
+	--font-size-2xl: 1.625rem;
+	--font-size-3xl: 2.125rem;
+	--font-size-4xl: 2.75rem;
+	--font-size-5xl: 3.75rem;
+
+	--leading-relaxed: 1.75;
+
+	/* Fraunces has a generous default width; headings want less. */
+	--tracking-tight: -0.015em;
+	--tracking-snug: -0.01em;
+	--tracking-wide: 0.08em;
+	--tracking-wider: 0.12em;
+
+	/* Layout */
+	--content-width: 660px;
+	--wide-width: 1120px;
+	--nav-height: 68px;
+
+	/* Soft, storybook radii */
+	--radius: 10px;
+	--radius-lg: 18px;
+	--radius-xl: 28px;
+	--radius-pill: 999px;
+
+	/* Warm shadows rather than neutral grey */
+	--shadow-sm: 0 1px 2px rgba(64, 40, 55, 0.06);
+	--shadow-md: 0 6px 20px rgba(64, 40, 55, 0.08);
+	--shadow-lg: 0 14px 44px rgba(64, 40, 55, 0.14);
+	/* A book cover standing up off the page. */
+	--shadow-book: 0 18px 40px rgba(64, 40, 55, 0.22);
 }
 
 /* Keep the signed-in Admin link separated from the primary navigation. */

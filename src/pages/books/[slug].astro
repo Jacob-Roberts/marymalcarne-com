@@ -1,0 +1,506 @@
+---
+import { getEmDashCollection, getEmDashEntry, getSeoMeta } from "emdash";
+import { Image, PortableText } from "emdash/ui";
+import Base from "../../layouts/Base.astro";
+import Sparkle from "../../components/Sparkle.astro";
+import {
+	formatReleaseDate,
+	parseGenres,
+	seriesLine,
+	starGlyphs,
+} from "../../utils/books";
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect("/404");
+
+const [{ entry: book, cacheHint }, { entries: allBooks }] = await Promise.all([
+	getEmDashEntry("books", slug),
+	getEmDashCollection("books", { orderBy: { series_position: "asc" }, limit: 24 }),
+]);
+
+if (!book) return Astro.redirect("/404");
+if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+
+const data = book.data;
+const isPrequel = Boolean(data.is_prequel);
+const genres = parseGenres(data.genres);
+const { filled, total } = starGlyphs(data.rating);
+const releaseDate = formatReleaseDate(data.release_date);
+
+// Buy links come from the json field; fall back to the single Amazon URL.
+const buyLinks = (data.buy_links ?? []).filter((link) => link?.url);
+const amazonUrl = data.amazon_url ?? buyLinks[0]?.url ?? null;
+
+// Reading order navigation.
+const index = allBooks.findIndex((entry) => entry.id === book.id);
+const previous = index > 0 ? allBooks[index - 1] : null;
+const next = index >= 0 && index < allBooks.length - 1 ? allBooks[index + 1] : null;
+
+const seo = getSeoMeta(book, {
+	siteTitle: "Mary Malcarne",
+	siteUrl: Astro.url.origin,
+	path: `/books/${slug}`,
+});
+
+// Facts worth showing in the spec list, in reading order.
+const facts = [
+	{ label: "Published", value: releaseDate },
+	{ label: "Publisher", value: data.publisher },
+	{ label: "Pages", value: data.page_count ? String(data.page_count) : null },
+	{ label: "Reading age", value: data.reading_age },
+].filter((fact) => fact.value);
+---
+
+<Base
+	title={seo.title}
+	description={seo.description}
+		image={data.cover ? data.cover.src : null}
+		canonical={seo.canonical}
+		content={{ collection: "books", id: book.data.id, slug }}
+>
+	<article class="book">
+		<nav class="crumbs" aria-label="Breadcrumb">
+			<a href="/">Home</a>
+			<span aria-hidden="true">/</span>
+			<a href="/books">Books</a>
+			<span aria-hidden="true">/</span>
+			<span aria-current="page">{data.title}</span>
+		</nav>
+
+		<div class="book-hero">
+			{
+				data.cover && (
+					<div class="book-cover" {...book.edit.cover}>
+						<Image image={data.cover} />
+					</div>
+				)
+			}
+
+			<div class="book-head">
+				{
+					data.series && (
+						<p class="book-series" {...book.edit.series}>
+							{seriesLine(data)}
+						</p>
+					)
+				}
+				<h1 class="book-title" {...book.edit.title}>{data.title}</h1>
+				{data.subtitle && (
+					<p class="book-subtitle" {...book.edit.subtitle}>
+						{data.subtitle}
+					</p>
+				)}
+				{data.hook && (
+					<p class="book-hook" {...book.edit.hook}>
+						{data.hook}
+					</p>
+				)}
+
+				{
+					data.rating != null && (
+						<p class="book-rating">
+							<span class="stars" aria-hidden="true">
+								{"★".repeat(filled)}
+								<span class="stars-empty">{"★".repeat(total - filled)}</span>
+							</span>
+							<span class="rating-text">
+								{data.rating} out of 5
+								{data.review_count ? ` · ${data.review_count} reviews` : ""}
+								<span class="rating-source"> on Amazon</span>
+							</span>
+						</p>
+					)
+				}
+
+				{amazonUrl && (
+					<a
+						href={amazonUrl}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="btn-buy"
+					>
+						{isPrequel ? "Read the prequel" : `Read ${data.title}`}
+						<Sparkle size="0.85em" />
+					</a>
+				)}
+
+				{buyLinks.length > 1 && (
+					<ul class="formats">
+						{buyLinks.map((link) => (
+							<li>
+								<a href={link.url} target="_blank" rel="noopener noreferrer">
+									{link.format}
+								</a>
+							</li>
+						))}
+					</ul>
+				)}
+			</div>
+		</div>
+
+		<div class="book-body">
+			{
+				facts.length > 0 && (
+					<dl class="facts">
+						{facts.map((fact) => (
+							<div class="fact">
+								<dt>{fact.label}</dt>
+								<dd>{fact.value}</dd>
+							</div>
+						))}
+					</dl>
+				)
+			}
+
+			{genres.length > 0 && (
+				<ul class="genres" {...book.edit.genres}>
+					{genres.map((genre) => (
+						<li>{genre}</li>
+					))}
+				</ul>
+			)}
+
+			{
+				data.synopsis && data.synopsis.length > 0 && (
+					<div class="synopsis" {...book.edit.synopsis}>
+						<h2 class="body-heading">Synopsis</h2>
+						<PortableText value={data.synopsis} />
+					</div>
+				)
+			}
+		</div>
+
+		<nav class="series-nav" aria-label="Reading order">
+			{
+				previous ? (
+					<a href={`/books/${previous.id}`} class="series-link series-prev">
+						<span class="series-dir">← Previous</span>
+						<span class="series-name">{previous.data.title}</span>
+					</a>
+				) : (
+					<span />
+				)
+			}
+			{
+				next ? (
+					<a href={`/books/${next.id}`} class="series-link series-next">
+						<span class="series-dir">Next →</span>
+						<span class="series-name">{next.data.title}</span>
+					</a>
+				) : (
+					<span />
+				)
+			}
+		</nav>
+	</article>
+</Base>
+
+<style>
+	.book {
+		max-width: var(--wide-width);
+		margin: 0 auto;
+		padding: var(--spacing-10) var(--spacing-6) var(--spacing-24);
+	}
+
+	/* Breadcrumbs */
+	.crumbs {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--spacing-2);
+		margin-bottom: var(--spacing-10);
+		font-size: var(--font-size-xs);
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wider);
+		color: var(--color-muted);
+	}
+
+	.crumbs a {
+		color: var(--color-muted);
+		text-decoration: none;
+	}
+
+	.crumbs a:hover {
+		color: var(--color-brand);
+	}
+
+	/* Hero: cover beside the title block */
+	.book-hero {
+		display: grid;
+		grid-template-columns: minmax(200px, 280px) minmax(0, 1fr);
+		gap: var(--spacing-16);
+		align-items: start;
+		margin-bottom: var(--spacing-16);
+	}
+
+	.book-cover {
+		border-radius: var(--radius) var(--radius) 6px var(--radius);
+		overflow: hidden;
+		background: var(--color-surface);
+		box-shadow: var(--shadow-book);
+	}
+
+	.book-cover :global(img) {
+		width: 100%;
+		height: auto;
+		aspect-ratio: 2 / 3;
+		object-fit: cover;
+	}
+
+	.book-head {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var(--spacing-3);
+	}
+
+	.book-series {
+		display: inline-flex;
+		align-items: center;
+		padding: var(--spacing-1) var(--spacing-3);
+		background: var(--color-bg-subtle);
+		border: 1px solid var(--color-border-subtle);
+		border-radius: var(--radius-pill);
+		font-size: var(--font-size-xs);
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wider);
+		color: var(--color-brand);
+	}
+
+	.book-title {
+		font-size: clamp(2.5rem, 6vw, var(--font-size-4xl));
+		font-weight: var(--font-weight-display);
+		line-height: 1.05;
+		letter-spacing: var(--tracking-tight);
+	}
+
+	.book-subtitle {
+		font-size: var(--font-size-xl);
+		font-style: italic;
+		color: var(--color-text-secondary);
+	}
+
+	.book-hook {
+		margin-top: var(--spacing-2);
+		padding-inline-start: var(--spacing-4);
+		border-inline-start: 3px solid var(--color-brand);
+		font-family: var(--font-heading);
+		font-size: var(--font-size-lg);
+		font-style: italic;
+		line-height: var(--leading-snug);
+		color: var(--color-text);
+	}
+
+	.book-rating {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--spacing-2);
+		font-size: var(--font-size-sm);
+		color: var(--color-text-secondary);
+	}
+
+	.stars {
+		font-size: 1.1em;
+		line-height: 1;
+		color: var(--color-sparkle);
+		letter-spacing: 0.08em;
+	}
+
+	.stars-empty {
+		color: var(--color-border);
+	}
+
+	.rating-source {
+		color: var(--color-muted);
+	}
+
+	.btn-buy {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--spacing-2);
+		margin-top: var(--spacing-3);
+		padding: var(--spacing-3) var(--spacing-6);
+		background: var(--color-brand);
+		border: 1px solid var(--color-brand);
+		border-radius: var(--radius-pill);
+		color: var(--color-on-brand);
+		font-size: var(--font-size-sm);
+		font-weight: 600;
+		text-decoration: none;
+		transition:
+			background var(--transition-fast),
+			border-color var(--transition-fast),
+			transform var(--transition-fast);
+	}
+
+	.btn-buy:hover {
+		background: var(--color-brand-hover);
+		border-color: var(--color-brand-hover);
+		color: var(--color-on-brand);
+		transform: translateY(-1px);
+	}
+
+	.formats {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--spacing-2);
+		margin-top: var(--spacing-3);
+		font-size: var(--font-size-xs);
+	}
+
+	.formats a {
+		display: inline-block;
+		padding: var(--spacing-1) var(--spacing-3);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-pill);
+		color: var(--color-text-secondary);
+		text-decoration: none;
+		transition:
+			border-color var(--transition-fast),
+			color var(--transition-fast);
+	}
+
+	.formats a:hover {
+		border-color: var(--color-brand);
+		color: var(--color-brand);
+	}
+
+	/* Body */
+	.book-body {
+		max-width: var(--content-width);
+		margin: 0 auto;
+	}
+
+	.facts {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--spacing-6) var(--spacing-10);
+		margin: 0 0 var(--spacing-10);
+		padding: var(--spacing-5) var(--spacing-6);
+		background: var(--color-bg-subtle);
+		border-radius: var(--radius-lg);
+	}
+
+	.fact dt {
+		font-size: var(--font-size-xs);
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wider);
+		color: var(--color-muted);
+	}
+
+	.fact dd {
+		margin: var(--spacing-1) 0 0;
+		font-size: var(--font-size-sm);
+		color: var(--color-text);
+	}
+
+	.genres {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--spacing-2);
+		list-style: none;
+		margin: 0 0 var(--spacing-10);
+	}
+
+	.genres li {
+		padding: var(--spacing-1) var(--spacing-3);
+		border: 1px solid var(--color-border-subtle);
+		border-radius: var(--radius-pill);
+		background: var(--color-surface);
+		font-size: var(--font-size-xs);
+		color: var(--color-text-secondary);
+	}
+
+	.body-heading {
+		font-size: var(--font-size-xl);
+		font-weight: var(--font-weight-heading);
+		letter-spacing: var(--tracking-snug);
+		margin-bottom: var(--spacing-4);
+	}
+
+	/* Reading-order nav */
+	.series-nav {
+		display: flex;
+		justify-content: space-between;
+		gap: var(--spacing-6);
+		max-width: var(--content-width);
+		margin: var(--spacing-20) auto 0;
+		padding-top: var(--spacing-8);
+		border-top: 1px solid var(--color-border-subtle);
+	}
+
+	.series-link {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-1);
+		max-width: 45%;
+		text-decoration: none;
+	}
+
+	.series-next {
+		text-align: right;
+		align-items: flex-end;
+	}
+
+	.series-dir {
+		font-size: var(--font-size-xs);
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wider);
+		color: var(--color-muted);
+	}
+
+	.series-name {
+		font-family: var(--font-heading);
+		font-size: var(--font-size-lg);
+		color: var(--color-text);
+		transition: color var(--transition-fast);
+	}
+
+	.series-link:hover .series-name {
+		color: var(--color-brand);
+	}
+
+	@media (max-width: 760px) {
+		.book {
+			padding: var(--spacing-6) var(--spacing-5) var(--spacing-16);
+		}
+
+		.book-hero {
+			grid-template-columns: 1fr;
+			gap: var(--spacing-8);
+			justify-items: center;
+			text-align: center;
+		}
+
+		.book-cover {
+			width: min(220px, 60vw);
+		}
+
+		.book-head {
+			align-items: center;
+		}
+
+		.book-hook {
+			text-align: start;
+		}
+
+		.series-nav {
+			flex-direction: column;
+			gap: var(--spacing-4);
+		}
+
+		.series-link {
+			max-width: none;
+			align-items: flex-start;
+			text-align: start;
+		}
+
+		.series-next {
+			align-items: flex-start;
+			text-align: start;
+		}
+	}
+</style>

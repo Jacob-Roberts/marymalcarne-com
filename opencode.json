@@ -1,0 +1,14 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "mary-malcarne-prod": {
+      "type": "remote",
+      "url": "https://marymalcarne.com/_emdash/api/mcp",
+      "oauth": {}
+    },
+    "emdash-docs": {
+      "type": "remote",
+      "url": "https://docs.emdashcms.com/mcp"
+    }
+  }
+}

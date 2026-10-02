@@ -23,17 +23,20 @@ export default defineConfig({
 	fonts: [
 		{
 			provider: fontProviders.google(),
-			name: "Inter",
+			name: "Lora",
 			cssVariable: "--font-body",
 			weights: [400, 500, 600, 700],
-			fallbacks: ["sans-serif"],
+			fallbacks: ["serif"],
 		},
 		{
+			// Loaded into --font-heading directly, so the @layer base default of
+			// `--font-heading: var(--font-body)` in tokens.css is overridden without
+			// needing a theme.css rule.
 			provider: fontProviders.google(),
-			name: "JetBrains Mono",
-			cssVariable: "--font-mono",
-			weights: [400, 500],
-			fallbacks: ["monospace"],
+			name: "Fraunces",
+			cssVariable: "--font-heading",
+			weights: [400, 500, 600, 700],
+			fallbacks: ["serif"],
 		},
 	],
 	devToolbar: { enabled: false },

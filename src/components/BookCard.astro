@@ -1,0 +1,161 @@
+---
+import type { EditProxy } from "emdash";
+import type { Book } from "../types/books";
+import { Image } from "emdash/ui";
+import { bookHref, seriesLabel, starGlyphs } from "../utils/books";
+
+interface Props {
+	book: Book;
+	/** Set on the book currently being viewed, so it can be de-emphasised. */
+	current?: boolean;
+	edit?: EditProxy;
+}
+
+const { book, current = false, edit } = Astro.props;
+const { filled, total } = starGlyphs(book.rating);
+---
+
+<article class:list={["book-card", { current }]}>
+	<a href={bookHref(book)} class="card-cover" {...edit?.cover}>
+		{
+			book.cover ? (
+				<div class="cover-frame">
+					<Image image={book.cover} />
+				</div>
+			) : (
+				<div class="cover-frame cover-missing" />
+			)
+		}
+	</a>
+	<div class="card-body">
+		<p class="card-series" {...edit?.series_position}>
+			{seriesLabel(book)}
+		</p>
+		<h3 class="card-title" {...edit?.title}>
+			<a href={bookHref(book)}>{book.title}</a>
+		</h3>
+		{book.subtitle && <p class="card-subtitle" {...edit?.subtitle}>{book.subtitle}</p>}
+		{
+			book.rating != null && (
+				<p class="card-rating" title={`${book.rating} out of 5 on Amazon`}>
+					<span class="stars" aria-hidden="true">
+						{"★".repeat(filled)}
+						<span class="stars-empty">{"★".repeat(total - filled)}</span>
+					</span>
+					<span class="sr-only">
+						Rated {book.rating} out of 5{book.review_count
+							? ` from ${book.review_count} Amazon reviews`
+							: " on Amazon"}
+					</span>
+				</p>
+			)
+		}
+	</div>
+</article>
+
+<style>
+	.book-card {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-4);
+	}
+
+	.book-card.current {
+		opacity: 0.55;
+	}
+
+	.card-cover {
+		display: block;
+	}
+
+	.cover-frame {
+		border-radius: var(--radius) var(--radius) 6px var(--radius);
+		overflow: hidden;
+		background: var(--color-surface);
+		box-shadow: var(--shadow-book);
+		transition:
+			transform var(--transition-base),
+			box-shadow var(--transition-base);
+	}
+
+	.card-cover:hover .cover-frame {
+		transform: translateY(-6px) rotate(-1deg);
+		box-shadow: 0 26px 56px rgba(64, 40, 55, 0.28);
+	}
+
+	/* Book covers are portrait 2:3. */
+	.cover-frame :global(img) {
+		width: 100%;
+		height: auto;
+		aspect-ratio: 2 / 3;
+		object-fit: cover;
+	}
+
+	.cover-missing {
+		aspect-ratio: 2 / 3;
+		background: var(--color-bg-subtle);
+		border: 1px dashed var(--color-border);
+	}
+
+	.card-body {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacing-1);
+	}
+
+	.card-series {
+		font-size: var(--font-size-xs);
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wider);
+		color: var(--color-brand);
+	}
+
+	.card-title {
+		font-size: var(--font-size-xl);
+		line-height: var(--leading-snug);
+	}
+
+	.card-title a {
+		color: var(--color-text);
+		text-decoration: none;
+		transition: color var(--transition-fast);
+	}
+
+	.card-title a:hover {
+		color: var(--color-brand);
+	}
+
+	.card-subtitle {
+		font-size: var(--font-size-sm);
+		font-style: italic;
+		color: var(--color-text-secondary);
+	}
+
+	.card-rating {
+		margin-top: var(--spacing-1);
+		font-size: var(--font-size-sm);
+		line-height: 1;
+	}
+
+	.stars {
+		color: var(--color-sparkle);
+		letter-spacing: 0.08em;
+	}
+
+	.stars-empty {
+		color: var(--color-border);
+	}
+
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+</style>

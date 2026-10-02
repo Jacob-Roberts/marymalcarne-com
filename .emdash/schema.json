@@ -1,6 +1,145 @@
 {
   "collections": [
     {
+      "slug": "books",
+      "label": "Books",
+      "labelSingular": "Book",
+      "description": "Mary Malcarne novels and novellas",
+      "supports": [
+        "drafts",
+        "revisions"
+      ],
+      "hidden": false,
+      "fields": [
+        {
+          "slug": "title",
+          "label": "Title",
+          "type": "string",
+          "required": true,
+          "unique": false
+        },
+        {
+          "slug": "subtitle",
+          "label": "Subtitle",
+          "type": "string",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "hook",
+          "label": "Hook Line",
+          "type": "string",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "cover",
+          "label": "Book Cover",
+          "type": "image",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "series",
+          "label": "Series",
+          "type": "string",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "series_position",
+          "label": "Series Position",
+          "type": "integer",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "is_prequel",
+          "label": "Is Prequel",
+          "type": "boolean",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "excerpt",
+          "label": "Card Summary",
+          "type": "text",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "synopsis",
+          "label": "Synopsis",
+          "type": "portableText",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "genres",
+          "label": "Genres",
+          "type": "string",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "rating",
+          "label": "Rating (out of 5)",
+          "type": "number",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "review_count",
+          "label": "Review Count",
+          "type": "integer",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "page_count",
+          "label": "Page Count",
+          "type": "integer",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "publisher",
+          "label": "Publisher",
+          "type": "string",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "reading_age",
+          "label": "Reading Age",
+          "type": "string",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "release_date",
+          "label": "Release Date",
+          "type": "datetime",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "amazon_url",
+          "label": "Amazon URL",
+          "type": "string",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "buy_links",
+          "label": "Where to Buy",
+          "type": "json",
+          "required": false,
+          "unique": false
+        }
+      ]
+    },
+    {
       "slug": "pages",
       "label": "Pages",
       "labelSingular": "Page",
@@ -24,6 +163,13 @@
           "slug": "content",
           "label": "Content",
           "type": "portableText",
+          "required": false,
+          "unique": false
+        },
+        {
+          "slug": "photo",
+          "label": "Photo",
+          "type": "image",
           "required": false,
           "unique": false
         }
@@ -74,5 +220,5 @@
       ]
     }
   ],
-  "version": "4575638517905f17"
+  "version": "a9e597e626943e48"
 }

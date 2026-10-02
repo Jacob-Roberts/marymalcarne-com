@@ -1,0 +1,111 @@
+---
+import { getEmDashCollection } from "emdash";
+import Base from "../../layouts/Base.astro";
+import BookCard from "../../components/BookCard.astro";
+
+const { entries: books, cacheHint } = await getEmDashCollection("books", {
+	orderBy: { series_position: "asc" },
+	limit: 24,
+});
+if (Astro.cache?.enabled) Astro.cache.set(cacheHint);
+
+const series = books[0]?.data.series ?? null;
+---
+
+<Base
+	title="Books"
+	description={series
+		? `All books in the ${series} series by Mary Malcarne, in reading order.`
+		: "All books by Mary Malcarne."}
+>
+	<div class="books-page">
+		<header class="page-head">
+			<h1>Books</h1>
+			{series && <p class="page-sub">{series}, in reading order</p>}
+		</header>
+
+		{
+			books.length === 0 ? (
+				<section class="empty-state">
+					<p>No books yet.</p>
+					<a href="/_emdash/admin/content/books/new" class="btn">
+						Add a book
+					</a>
+				</section>
+			) : (
+				<div class="book-grid">
+					{books.map((book) => (
+						<BookCard book={book.data} edit={book.edit} />
+					))}
+				</div>
+			)
+		}
+	</div>
+</Base>
+
+<style>
+	.books-page {
+		max-width: var(--wide-width);
+		margin: 0 auto;
+		padding: var(--spacing-20) var(--spacing-6) var(--spacing-24);
+	}
+
+	.page-head {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: var(--spacing-2);
+		margin-bottom: var(--spacing-16);
+		text-align: center;
+	}
+
+	h1 {
+		font-size: clamp(2.5rem, 6vw, var(--font-size-4xl));
+		font-weight: var(--font-weight-display);
+		letter-spacing: var(--tracking-tight);
+	}
+
+	.page-sub {
+		font-size: var(--font-size-sm);
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: var(--tracking-wider);
+		color: var(--color-brand);
+	}
+
+	.book-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+		gap: var(--spacing-12) var(--spacing-8);
+		max-width: 900px;
+		margin: 0 auto;
+	}
+
+	.empty-state {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: var(--spacing-3);
+		text-align: center;
+		padding: var(--spacing-20) var(--spacing-6);
+		color: var(--color-muted);
+	}
+
+	.btn {
+		display: inline-block;
+		padding: var(--spacing-3) var(--spacing-6);
+		background: var(--color-brand);
+		border: 1px solid var(--color-brand);
+		border-radius: var(--radius-pill);
+		color: var(--color-on-brand);
+		font-size: var(--font-size-sm);
+		font-weight: 600;
+		text-decoration: none;
+	}
+
+	@media (max-width: 640px) {
+		.books-page {
+			padding: var(--spacing-12) var(--spacing-5) var(--spacing-16);
+		}
+	}
+</style>

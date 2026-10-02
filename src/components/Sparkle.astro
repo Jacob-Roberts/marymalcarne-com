@@ -1,0 +1,33 @@
+---
+/**
+ * A single four-point sparkle glyph. Sized in `em` so it tracks the font size
+ * of whatever it sits next to.
+ */
+interface Props {
+	size?: string;
+	class?: string;
+}
+
+const { size = "1em", class: className } = Astro.props;
+---
+
+<svg
+	class={className}
+	width={size}
+	height={size}
+	viewBox="0 0 24 24"
+	fill="currentColor"
+	aria-hidden="true"
+	focusable="false"
+>
+	<path
+		d="M12 0c.6 6.3 5.1 10.8 12 12-6.9 1.2-11.4 5.7-12 12-.6-6.3-5.1-10.8-12-12C6.9 10.8 11.4 6.3 12 0Z"
+	></path>
+</svg>
+
+<style>
+	svg {
+		display: block;
+		color: var(--color-sparkle);
+	}
+</style>
