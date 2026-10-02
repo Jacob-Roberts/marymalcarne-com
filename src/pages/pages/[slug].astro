@@ -42,6 +42,7 @@ const photo = (page.data as { photo?: BookMediaField }).photo ?? null;
 	canonical={seo.canonical}
 	robots={seo.robots}
 	content={{ collection: "pages", id: page.data.id, slug }}
+	image={photo ? photo.src : null}
 >
 	<article class="page-article">
 		<header class="page-header">
