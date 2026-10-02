@@ -65,6 +65,36 @@
 					"searchable": true
 				}
 			]
+		},
+		{
+			"slug": "links",
+			"label": "Links",
+			"labelSingular": "Link",
+			"description": "Social and store links shown in the footer's Elsewhere column",
+			"supports": ["drafts", "revisions"],
+			"routable": false,
+			"titleField": "label",
+			"fields": [
+				{
+					"slug": "label",
+					"label": "Label",
+					"type": "string",
+					"required": true
+				},
+				{
+					"slug": "url",
+					"label": "URL",
+					"type": "string",
+					"required": true
+				},
+				{
+					"slug": "sort_order",
+					"label": "Sort Order",
+					"type": "integer",
+					"indexed": true,
+					"defaultValue": 0
+				}
+			]
 		}
 	],
 	"taxonomies": [
@@ -295,6 +325,38 @@
 		}
 	],
 	"content": {
+		"links": [
+			{
+				"id": "link-instagram",
+				"slug": "instagram",
+				"status": "published",
+				"data": {
+					"label": "Instagram",
+					"url": "https://www.instagram.com/marymalcarne/",
+					"sort_order": 10
+				}
+			},
+			{
+				"id": "link-tiktok",
+				"slug": "tiktok",
+				"status": "published",
+				"data": {
+					"label": "TikTok",
+					"url": "https://www.tiktok.com/@marymalcarne",
+					"sort_order": 20
+				}
+			},
+			{
+				"id": "link-amazon",
+				"slug": "amazon",
+				"status": "published",
+				"data": {
+					"label": "Amazon",
+					"url": "https://www.amazon.com/stores/Mary-Malcarne/author/B0B4TY6R7Z",
+					"sort_order": 30
+				}
+			}
+		],
 		"pages": [
 		{
 			"id": "about",

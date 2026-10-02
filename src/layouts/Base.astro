@@ -1,5 +1,9 @@
 ---
-import { getMenuWithCacheHint, getSiteSettingsWithCacheHint } from "emdash";
+import {
+	getEmDashCollection,
+	getMenuWithCacheHint,
+	getSiteSettingsWithCacheHint,
+} from "emdash";
 import {
 	WidgetArea,
 	EmDashHead,
@@ -44,14 +48,21 @@ const {
 	author,
 	content,
 } = Astro.props;
-const [settingsResult, menuResult] = await Promise.all([
+const [settingsResult, menuResult, elsewhereResult] = await Promise.all([
 	getSiteSettingsWithCacheHint(),
 	getMenuWithCacheHint("primary"),
+	getEmDashCollection("links", { orderBy: { sort_order: "asc" }, limit: 12 }),
 ]);
 if (Astro.cache?.enabled) {
 	Astro.cache.set(settingsResult.cacheHint);
 	Astro.cache.set(menuResult.cacheHint);
+	Astro.cache.set(elsewhereResult.cacheHint);
 }
+
+const elsewhereLinks = elsewhereResult.entries.map((entry) => ({
+	label: entry.data.label,
+	url: entry.data.url,
+}));
 
 const { siteTitle, siteTagline, siteLogo } = resolveBlogSiteIdentity(
 	settingsResult.data,
@@ -205,18 +216,22 @@ const isLoggedIn = !!Astro.locals.user;
 							}
 						</ul>
 					</div>
-					<div class="footer-nav">
-						<h2 class="footer-heading">Elsewhere</h2>
-						<ul class="footer-links">
-							<li>
-								<a
-									href={amazonAuthorUrl}
-									target="_blank"
-									rel="noopener noreferrer">Mary Malcarne on Amazon</a
-								>
-							</li>
-						</ul>
-					</div>
+					{
+						elsewhereLinks.length > 0 && (
+							<div class="footer-nav">
+								<h2 class="footer-heading">Elsewhere</h2>
+								<ul class="footer-links">
+									{elsewhereLinks.map((link) => (
+										<li>
+											<a href={link.url} target="_blank" rel="noopener noreferrer">
+												{link.label}
+											</a>
+										</li>
+									))}
+								</ul>
+							</div>
+						)
+					}
 					<div class="footer-widgets-section">
 						<WidgetArea name="footer" />
 					</div>

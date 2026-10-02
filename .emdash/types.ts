@@ -33,6 +33,21 @@ export interface Book {
   terms?: Record<string, TaxonomyTerm[]>;
 }
 
+export interface Link {
+  id: string;
+  slug: string | null;
+  status: string;
+  label: string;
+  url: string;
+  sort_order?: number;
+  createdAt: Date;
+  updatedAt: Date;
+  publishedAt: Date | null;
+  byline?: BylineSummary | null;
+  bylines?: ContentBylineCredit[];
+  terms?: Record<string, TaxonomyTerm[]>;
+}
+
 export interface Page {
   id: string;
   slug: string | null;

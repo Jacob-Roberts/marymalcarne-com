@@ -140,6 +140,41 @@
       ]
     },
     {
+      "slug": "links",
+      "label": "Links",
+      "labelSingular": "Link",
+      "description": "Social and store links shown in the footer's Elsewhere column",
+      "supports": [
+        "drafts",
+        "revisions"
+      ],
+      "hidden": false,
+      "fields": [
+        {
+          "slug": "label",
+          "label": "Label",
+          "type": "string",
+          "required": true,
+          "unique": false
+        },
+        {
+          "slug": "url",
+          "label": "URL",
+          "type": "url",
+          "required": true,
+          "unique": false
+        },
+        {
+          "slug": "sort_order",
+          "label": "Sort Order",
+          "type": "integer",
+          "required": false,
+          "unique": false,
+          "defaultValue": 0
+        }
+      ]
+    },
+    {
       "slug": "pages",
       "label": "Pages",
       "labelSingular": "Page",
@@ -220,5 +255,5 @@
       ]
     }
   ],
-  "version": "a9e597e626943e48"
+  "version": "8c905fd207bb5617"
 }
