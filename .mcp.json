@@ -3,6 +3,10 @@
 		"emdash-docs": {
 			"type": "http",
 			"url": "https://docs.emdashcms.com/mcp"
+		},
+		"mary-malcarne-prod": {
+			"type": "http",
+			"url": "https://marymalcarne.com/_emdash/api/mcp"
 		}
 	}
 }

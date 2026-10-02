@@ -59,6 +59,10 @@ A blog with posts, pages, categories, tags, full-text search, and RSS. Designed 
 | Tag         | `/tag/[slug]`      | Posts filtered by tag                                                                                  |
 | RSS         | `/rss.xml`         | Generated feed                                                                                         |
 
+## Editing production
+
+To edit the content in production, use the `mary-malcarne-prod` MCP server
+
 ## Schema
 
 - `posts` collection: `title`, `featured_image`, `content` (Portable Text), `excerpt` (text).
