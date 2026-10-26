@@ -18,6 +18,7 @@ const { items: results } = query
 <Base
 	title={query ? `Search: ${query}` : "Search"}
 	description="Search blog posts"
+	cacheable={false}
 >
 	<section class="search-page">
 		<h1 class="search-title">Search</h1>

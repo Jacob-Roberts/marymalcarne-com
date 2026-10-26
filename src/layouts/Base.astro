@@ -33,6 +33,8 @@ interface Props {
 	author?: string | null;
 	/** Pass content reference for plugin page contributions on content pages */
 	content?: { collection: string; id: string; slug?: string | null };
+	/** Opt out of route caching for this page (e.g. query-dependent pages like search). */
+	cacheable?: boolean;
 }
 
 const {
@@ -47,13 +49,14 @@ const {
 	modifiedTime,
 	author,
 	content,
+	cacheable = true,
 } = Astro.props;
 const [settingsResult, menuResult, elsewhereResult] = await Promise.all([
 	getSiteSettingsWithCacheHint(),
 	getMenuWithCacheHint("primary"),
 	getEmDashCollection("links", { orderBy: { sort_order: "asc" }, limit: 12 }),
 ]);
-if (Astro.cache?.enabled) {
+if (cacheable && Astro.cache?.enabled) {
 	Astro.cache.set(settingsResult.cacheHint);
 	Astro.cache.set(menuResult.cacheHint);
 	Astro.cache.set(elsewhereResult.cacheHint);

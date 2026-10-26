@@ -18,6 +18,14 @@
 	],
 	// Sandboxed plugins require Worker Loader, available on Workers paid plans. Uncomment to enable:
 	// "worker_loaders": [{ "binding": "LOADER" }],
+	// Optional: KV namespace for EmDash's object cache (reduces D1 reads).
+	// Create it with: npx wrangler kv namespace create CACHE
+	// Then replace the placeholder id below and uncomment.
+	// "kv_namespaces": [
+	//   { "binding": "CACHE", "id": "REPLACE_WITH_KV_NAMESPACE_ID" }
+	// ],
+	// Keep cached pages across deploys so a deploy doesn't wipe the edge cache.
+	"cache": { "enabled": true, "cross_version_cache": true },
 	// General maintenance cron trigger
 	"triggers": {
 		"crons": ["* * * * *"],
