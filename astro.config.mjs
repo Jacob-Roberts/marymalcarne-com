@@ -32,17 +32,17 @@ export default defineConfig({
 	routeRules: {
 		// Long-lived edge cache for mostly-static public pages. EmDash
 		// invalidates these by tag when content changes in the admin.
-		"/": { maxAge: 3600, swr: 86400, tags: ["posts", "pages", "books", "links", "all"] },
-		"/posts": { maxAge: 1800, swr: 86400, tags: ["posts", "all"] },
-		"/posts/[slug]": { maxAge: 3600, swr: 86400, tags: ["posts", "all"] },
-		"/pages/[slug]": { maxAge: 3600, swr: 86400, tags: ["pages", "all"] },
-		"/category/[slug]": { maxAge: 1800, swr: 86400, tags: ["posts", "all"] },
-		"/tag/[slug]": { maxAge: 1800, swr: 86400, tags: ["posts", "all"] },
-		"/books": { maxAge: 3600, swr: 86400, tags: ["books", "all"] },
-		"/books/[slug]": { maxAge: 3600, swr: 86400, tags: ["books", "all"] },
+			"/": { maxAge: 86400, swr: 604800, tags: ["posts", "pages", "books", "links", "all"] },
+		"/posts": { maxAge: 86400, swr: 604800, tags: ["posts", "all"] },
+		"/posts/[slug]": { maxAge: 86400, swr: 604800, tags: ["posts", "all"] },
+		"/pages/[slug]": { maxAge: 86400, swr: 604800, tags: ["pages", "all"] },
+		"/category/[slug]": { maxAge: 86400, swr: 604800, tags: ["posts", "all"] },
+		"/tag/[slug]": { maxAge: 86400, swr: 604800, tags: ["posts", "all"] },
+		"/books": { maxAge: 86400, swr: 604800, tags: ["books", "all"] },
+		"/books/[slug]": { maxAge: 86400, swr: 604800, tags: ["books", "all"] },
 		"/rss.xml": { maxAge: 3600, swr: 86400, tags: ["posts", "all"] },
-		"/sitemap.xml": { maxAge: 3600, swr: 86400, tags: ["posts", "pages", "books", "all"] },
-		"/sitemap-[collection].xml": { maxAge: 3600, swr: 86400, tags: ["posts", "pages", "books", "all"] },
+		"/sitemap.xml": { maxAge: 86400, swr: 604800, tags: ["posts", "pages", "books", "all"] },
+		"/sitemap-[collection].xml": { maxAge: 86400, swr: 604800, tags: ["posts", "pages", "books", "all"] },
 	},
 	fonts: [
 		{
