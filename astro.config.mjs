@@ -19,12 +19,12 @@ export default defineConfig({
 	integrations: [
 		react(),
 		emdash({
-			database: d1({ binding: "DB", session: "auto" }),
+			database: d1({ binding: "DB", session: "auto", coalesce: true }),
 			storage: r2({ binding: "MEDIA" }),
 			// Optional: cache D1 query results in a KV namespace to cut D1 reads
 			// for cache misses and signed-in editors. Enable only after creating
 			// the namespace and binding it (see wrangler.jsonc instructions):
-			// objectCache: kvCache({ binding: "CACHE" }),
+			objectCache: kvCache({ binding: "CACHE" }),
 			toolbar: "client",
 			plugins: [emdashSmtp()],
 		}),
